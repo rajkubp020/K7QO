@@ -1,0 +1,11 @@
+{
+ "language": "python",
+ "argv": [
+  "/Applications/Ovito.app/Contents/MacOS/Ovito.App/Contents/MacOS/ovitos",
+  "-m",
+  "ipykernel",
+  "-f",
+  "{connection_file}"
+ ],
+ "display_name": "ovitos"
+}
