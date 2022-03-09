@@ -1,0 +1,51 @@
+units           real
+dimension       3
+processors      * * *
+boundary        p p p
+
+# read data
+atom_style      charge
+read_data       NS.dat
+
+# potential
+include		pot.mod
+
+# outputs
+thermo          1
+thermo_style    custom step temp pe press lx density
+
+# mix
+velocity        all create 4000.0 5812775 dist gaussian
+fix             1 all nvt temp 4000 4000 100
+run             10
+unfix           1
+#rekaxation at 4000k
+
+fix             1 all npt temp 4000 4000 100 iso 0 0 1000
+run             10
+unfix           1
+
+write_restart   liq4000.rest
+write_data      liq4000.dat
+
+# cooling 1K/ps
+fix             1 all npt temp 4000 300 100 iso 0 0 1000
+run             37 #1K/ps
+unfix           1
+
+# relax
+fix             1 all npt temp 300 300 100 iso 0 0 1000
+run             10
+unfix           1
+
+# statistical average
+dump            2 all custom 1 md.lammpstrj id type x y z
+fix             1 all nvt temp 300 300 100
+run             100
+unfix           1
+undump          2
+
+write_restart   glass.rest
+write_data      glass.dat
+
+
