@@ -1,0 +1,36 @@
+units           metal
+dimension       3
+processors      * * *
+boundary        p p p
+atom_style      atomic
+
+#read_restart    meso.rest
+read_data        Mg_poly.dat
+
+# ------------------------ FORCE FIELDS ------------------------------
+pair_style      meam/c
+pair_coeff      * * library.mg.meam Mg Mg2014.meam Mg
+
+# ------------------------- SETTINGS ---------------------------------
+timestep        0.05
+#velocity all   create 300.0 5812775 dist gaussian
+thermo          500
+thermo_style    custom step etotal temp press pe vol lx ly lz pxx pyy pzz
+
+# INITIAL
+change_box       all triclinic
+#fix             1 all box/relax x 0 y 0 z 0 xy 1000 xz 0 yz 0
+#min_style       cg
+#min_modify      line quadratic
+#minimize        1.0e-10 1.0e-10 100000 100000
+#unfix           1
+
+  dump            1 all custom 1 mgpolyrerun.creep.lammpstrj id type x y z fx fy fz
+
+  thermo_style    custom step pe press vol lx ly lz xy xz yz density
+  rerun           mgpoly.creep.lammpstrj dump x y z fx fy fz
+
+
+#write_data     Mg_polycreep.dat
+#write_restart  Mg_polycreep.rest
+

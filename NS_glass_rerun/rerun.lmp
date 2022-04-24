@@ -16,11 +16,13 @@ thermo          1
 
 group 	Si type 1
 group 	O type 2
-# compute dispatom all displace/atom
+compute dispatom all displace/atom
 compute			my_msd all msd com yes
-thermo_style    custom step temp pe press lx density c_my_msd[4] 
+compute msdSi Si msd com yes
+thermo_style    custom step temp pe press lx density c_my_msd[4] c_msdSi[4  ]
 #dump here
 #read_dump md.lammpstrj
+dump            2 all custom 1 md_rerun.lammpstrj id type x y z 
 rerun       md.lammpstrj first 0 every 1 last 150 dump x y z # xy box yes scaled
 
 write_restart   glass.rest
